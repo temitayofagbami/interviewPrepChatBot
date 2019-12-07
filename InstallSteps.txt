@@ -1,1 +1,7 @@
 npm install express --save
+
+git commit -m "Inital Commit"
+git push heroku master
+heroku logs --tail
+
+npm install body-parser --save

@@ -1,7 +1,10 @@
 npm install express --save
-
+//intall and deploy heroku
 git commit -m "Inital Commit"
 git push heroku master
 heroku logs --tail
 
 npm install body-parser --save
+//DialogFlow Node js client
+npm install dialog
+flow --save

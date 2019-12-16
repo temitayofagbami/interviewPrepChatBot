@@ -6,11 +6,9 @@ const app = express(); //make backend app
  app.use(bodyParser.json());
  //implement Routes-for the api endpoints 
  //to send request to dialogFlow
-//route handlers, add callback fn
 
+//import the DialogFlow routes
 require('./routes/dialogFlowRoutes')(app);
-
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT); //app to listen 5000

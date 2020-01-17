@@ -16,7 +16,7 @@ class Chatbot extends Component{
         messages: []
         };
     }
-    //service methods to send http request to backend route handlers
+    //service methods to send HTTP request to backend route handlers
     async df_text_query(queryText){
         //add message that from user to state object
         let says = {

@@ -56,10 +56,21 @@ class Chatbot extends Component{
         }
     };
     
-//mount
-componentDidMount() {
-    this.df_text_query('Welcome to bot');
-}
+  //mount
+    componentDidMount() {
+       //this.df_text_query('Welcome to bot');
+        //add message that from bot to state object
+        let says = {
+            speaker: "bot",
+            msg: {
+                text: {
+                    text: "Good day. I am the bot What can i help you with"
+                }
+            }
+        };
+        //append this user and message to state
+        this.setState({messages: [...this.state.messages, says]});
+    }
     //render messages from messages in message tag
     //pass in message array
     renderMessages(stateMessages){

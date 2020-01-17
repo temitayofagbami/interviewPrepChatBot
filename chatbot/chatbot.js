@@ -31,12 +31,13 @@ textQuery: async function(text, parameters){
         }
      };
     // Send request and log result
-    //let responses = await sessionClient
-      //  .detectIntent(request);
+    let responses = await sessionClient
+        .detectIntent(request);
         
      //right now i am not getting data from dialogflow
      //using dummy data
-    let  responses = {"my": "dummyresponse"};
+    //let  responses = {"my": "dummyresponse"};
+    
     responses =  await self.handleAction(responses);
     return responses;
     },

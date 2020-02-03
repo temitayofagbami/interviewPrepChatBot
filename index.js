@@ -9,6 +9,6 @@ const app = express(); //make backend app
 
 //import the DialogFlow routes
 require('./routes/dialogFlowRoutes')(app);
-
+//require('./routes/dialogFlowRoutes-2')(app);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT); //app to listen 5000

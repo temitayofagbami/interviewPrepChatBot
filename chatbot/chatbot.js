@@ -1,3 +1,4 @@
+ 
 'use strict'
 //import diagflow module
 const dialogflow = require('dialogflow'); 
@@ -30,14 +31,12 @@ textQuery: async function(text, parameters){
             }
         }
      };
-    // Send request and log result
-    let responses = await sessionClient
-        .detectIntent(request);
-        
-     //right now i am not getting data from dialogflow
-     //using dummy data
-    //let  responses = {"my": "dummyresponse"};
     
+   
+    // Send request and log result
+     let responses = await sessionClient
+        .detectIntent(request);
+     
     responses =  await self.handleAction(responses);
     return responses;
     },
@@ -47,3 +46,7 @@ textQuery: async function(text, parameters){
     }
 
 }
+
+
+
+

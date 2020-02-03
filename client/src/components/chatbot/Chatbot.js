@@ -15,9 +15,11 @@ class Chatbot extends Component{
         // This binding is necessary to make `this` work in the callback
       //  this._handleInputKeyPress = this._handleInputKeyPress.bind(this);
         this._handleKeyPress = this._handleKeyPress.bind(this);  
+       
       //set initial state of chatbot messages
         this.state = {
         messages: [],
+        userquery: ''
         };
     }
     //service methods to send HTTP request to backend route handlers
@@ -33,34 +35,21 @@ class Chatbot extends Component{
         };
         //append this user and message to state
         this.setState({messages: [...this.state.messages, says]});
-   
         
         //make http post request with axios httpclient 
         //get response
-       // const res = await axios.post('/api/df_text_query',  {text: queryText});
+       const res = await axios.post('/api/df_text_query',  {text: queryText});
         //deserialize response fufilmentmessages
         ////append this bot and message to state
-      /* for (let msg of res.data.fulfillmentMessages) {
+       for (let msg of res.data.fulfillmentMessages) {
             let says = {
                 speaker: 'bot',
                 msg: msg
                
             }
-            
-*/
-           //just a dummy response
-          
-           says = {
-            speaker: 'bot',
-            msg: {
-                text: {
-                    text: "We have Algo  courses"
-                }
-            }
-           
-        } ; 
+     
         this.setState({messages: [...this.state.messages, says]});
-        
+    }
     
     }
      //service methods to send event query request 
@@ -79,7 +68,7 @@ class Chatbot extends Component{
     
   //mount bots welcome message
     componentDidMount() {
-       //this.df_text_query('Welcome to bot');
+     
         //add message that from bot to state object
         let says = {
             speaker: "bot",
@@ -91,6 +80,7 @@ class Chatbot extends Component{
         };
         //append the bot and message to state
         this.setState({messages: [...this.state.messages, says]});
+        this.setState({userquery: ''});
     }
     //allow
     componentDidUpdate() {
@@ -114,7 +104,7 @@ class Chatbot extends Component{
    
 
     //key press event handling 
-   _handleKeyPress(e){
+    _handleKeyPress(e){
         //if key is enter
         if(e.key === 'Enter'){
             //call service method to process text 
@@ -124,6 +114,8 @@ class Chatbot extends Component{
         }
     }
   
+   
+
     render(){
         return(
             <div style = {{height: 400, width: 400, float: 'right'} }> 

@@ -7,11 +7,13 @@ const config = require('../routes/config/key');
 // Instantiate a DialogFlow client.
 const sessionClient = new dialogflow.SessionsClient();
 //define session path with parameters from config file
-const sessionPath =  sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID);
+//const sessionPath =  sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID);
 //chat bot text query function
 //take text from chatbot , create request and returns response
 module.exports = {
-textQuery: async function(text, parameters){
+textQuery: async function(text, userID, parameters){
+    //define session path with parameters from config file and userID from cookie
+    let sessionPath =  sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID + userID);
     let self = module.exports;
 
     //create the  request to be send to dialogflow
@@ -34,10 +36,14 @@ textQuery: async function(text, parameters){
     
    
     // Send request and log result
+
      let responses = await sessionClient
         .detectIntent(request);
-     
+
+
+
     responses =  await self.handleAction(responses);
+
     return responses;
     },
 

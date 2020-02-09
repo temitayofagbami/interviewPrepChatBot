@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import axios from "axios/index";
 import Message from "./Message"
+import Cookies from 'universal-cookie';
+import { v4 as uuid } from 'uuid';
+
+
+// create global Cookie object created when chatbot is opened
+const cookies = new Cookies();
 
 //define Chatbot class component
 //using components becuse it allow states
@@ -19,8 +25,14 @@ class Chatbot extends Component{
       //set initial state of chatbot messages
         this.state = {
         messages: [],
-        userquery: ''
         };
+
+        //add unique id generator to cookie
+        if (cookies.get('userID') === undefined) {
+            cookies.set('userID', uuid(), { path: '/' });
+        }
+    
+        console.log(cookies.get('userID'));
     }
     //service methods to send HTTP request to backend route handlers
     async df_text_query(queryText){
@@ -36,16 +48,22 @@ class Chatbot extends Component{
         //append this user and message to state
         this.setState({messages: [...this.state.messages, says]});
         
-        //make http post request with axios httpclient 
-        //get response
-       const res = await axios.post('/api/df_text_query',  {text: queryText});
-        //deserialize response fufilmentmessages
+        //make http post request using axios httpclient 
+        //to backend 
+        //backend will send request to dialogflow
+        //also sending the cookie id to back end 
+      
+        //cookie userid will be used to create a dialogflow session
+        //get response back from dialogflow
+      // const res = await axios.post('/api/df_text_query',  {text: queryText});
+       const res = await axios.post('/api/df_text_query',  {text: queryText, userID: cookies.get('userID')});
+ 
+       //deserialize response fufilmentmessages
         ////append this bot and message to state
        for (let msg of res.data.fulfillmentMessages) {
             let says = {
                 speaker: 'bot',
                 msg: msg
-               
             }
      
         this.setState({messages: [...this.state.messages, says]});
@@ -55,7 +73,9 @@ class Chatbot extends Component{
      //service methods to send event query request 
      async df_event_query(eventName) {
 
-        const res = await axios.post('/api/df_event_query',  {event: eventName});
+        //const res = await axios.post('/api/df_event_query',  {event: eventName});
+        const res = await axios.post('/api/df_event_query',  {event: eventName, userID: cookies.get('userID')});
+
         for (let msg of res.data.fulfillmentMessages) {
             let says = {
                 speaker: 'bot',

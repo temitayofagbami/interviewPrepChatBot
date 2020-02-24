@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios/index";
-import Message from "./Message"
+import Message from "./Message";
+import Card from "./Card";
+import QuickReplies from './QuickReplies';
 import Cookies from 'universal-cookie';
 import { v4 as uuid } from 'uuid';
 
@@ -17,15 +19,15 @@ class Chatbot extends Component{
     //set the inital state in constructor
     constructor(props){
         super(props);
-        //bind 'this' to handle keypress
+        //bind 'this' to handle keypress and quick replies
         // This binding is necessary to make `this` work in the callback
-      //  this._handleInputKeyPress = this._handleInputKeyPress.bind(this);
         this._handleKeyPress = this._handleKeyPress.bind(this);  
-       
+        this._handleQuickReplyPayload = this._handleQuickReplyPayload.bind(this);
       //set initial state of chatbot messages
         this.state = {
         messages: [],
         };
+        
 
         //add unique id generator to cookie
         if (cookies.get('userID') === undefined) {
@@ -105,20 +107,59 @@ class Chatbot extends Component{
     //allow
     componentDidUpdate() {
         this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+       
+    }
+    //renders card response
+    renderCards(cards) {
+        return cards.map((card, i) => <Card key={i} payload={card.structValue}/>);
+    }
+//render a message
+//handles reponse for renderMessages and rendercards and quick replies
+    renderOneMessage(message, i){
+        if (message.msg && message.msg.text && message.msg.text.text) {
+            return <Message key={i} speaker={message.speaker} text={message.msg.text.text}/>;
+        } else if (message.msg && message.msg.payload.fields.cards) { //message.msg.payload.fields.cards.listValue.values
+
+            return <div key={i}>
+                <div className="card-panel grey lighten-5 z-depth-1">
+                    <div style={{overflow: 'hidden'}}>
+                        <div className="col s2">
+                            <a href="/" className="btn-floating btn-large waves-effect waves-light red">{message.speaker}</a>
+                        </div>
+                        <div style={{ overflow: 'auto', overflowY: 'scroll'}}>
+                            <div style={{ height: 300, width:message.msg.payload.fields.cards.listValue.values.length * 270}}>
+                                {this.renderCards(message.msg.payload.fields.cards.listValue.values)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             } else if (message.msg &&
+                message.msg.payload &&
+                message.msg.payload.fields &&
+                message.msg.payload.fields.quick_replies
+            ) {
+                return <QuickReplies
+                    text={message.msg.payload.fields.text ? message.msg.payload.fields.text : null}
+                    key={i}
+                    replyClick={this._handleQuickReplyPayload}
+                    speaker={message.speaker}
+                    payload={message.msg.payload.fields.quick_replies.listValue.values}/>;
+        }
+    
     }
     //render messages from messages in message tag
     //pass in message array
     renderMessages(stateMessages){
         if (stateMessages) {
             return stateMessages.map((message, i) => {
-                    
-                    return <Message key = {i} speaker={message.speaker} text={message.msg.text.text}/> ;
-                });
+             return this.renderOneMessage(message, i);
+            
+            });
            
         } else {
             return null;
         }
-
        
     }
    
@@ -133,8 +174,14 @@ class Chatbot extends Component{
            e.target.value = '';
         }
     }
-  
-   
+    //quick replies payload event handling
+    _handleQuickReplyPayload(event, payload, text) {
+        event.preventDefault();
+        event.stopPropagation();
+        //call service method to process text
+        this.df_text_query(text);
+
+    }
 
     render(){
         return(
@@ -152,5 +199,6 @@ class Chatbot extends Component{
         )
     }
 }
+
 
 export default Chatbot;

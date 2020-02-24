@@ -4,10 +4,20 @@
 const dialogflow = require('dialogflow'); 
 //import  config file to get configuration  paramaeters(googleprojectID, diaflowagentsessionid) for session path
 const config = require('../routes/config/key'); 
+//import mongoose
+const mongoose = require('mongoose');
+//import Registration
+require('../models/Registration');
+//register Registration model
+const Registration = mongoose.model('registration');
+
 // Instantiate a DialogFlow client.
 const sessionClient = new dialogflow.SessionsClient();
-//define session path with parameters from config file
-//const sessionPath =  sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID);
+//define session path with parameters from config file and userID from cookie
+//const sessionPath =  sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID + userID);
+
+
+
 //chat bot text query function
 //take text from chatbot , create request and returns response
 module.exports = {
@@ -40,15 +50,34 @@ textQuery: async function(text, userID, parameters){
      let responses = await sessionClient
         .detectIntent(request);
 
-
-
     responses =  await self.handleAction(responses);
-
+    
     return responses;
     },
-
+//fn to handle responses
     handleAction : function(responses){
         return responses;
+    },
+
+    //fn to save registration in db
+    saveRegistration: async function(fields){
+
+        //create a registration object
+        //pass user registation details 
+        const registration =  new Registration({
+            name: fields.name.stringValue,
+            address: fields.address.stringValue,
+            phone: fields.phone.stringValue,
+            email: fields.email.stringValue,
+            registerDate: Date.now()
+        });
+        //save the user registration in db
+        try{
+            let reg = await registration.save();
+            console.log(reg);
+        } catch (err){
+            console.log(err);
+        }
     }
 
 }

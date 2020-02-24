@@ -1,6 +1,12 @@
 const express = require('express'); //import express
 const bodyParser = require('body-parser'); //import body parser
 const app = express(); //make backend app
+
+//import  config file to get configuration  mongo uri connection string
+const config = require('./routes/config/key'); 
+const mongoose = require('mongoose'); //import mongoose
+//connect to db
+mongoose.connect(config.mongoURI, { useNewUrlParser: true });
  //use body parser for parsing incoming request stream 
  // exposes it on req. body 
  app.use(bodyParser.json());
